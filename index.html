@@ -1,0 +1,240 @@
+<!DOCTYPE html>
+<html>
+<head>
+<style>
+  :root {
+    --cat-color: #808080; 
+    --ear-inner: #5a5a5a;
+    --eye-color: #f1c40f; 
+    --accent-purple: #9b59b6;
+    --deep-purple: #6c3483;
+    --neon-purple: #efbbff; /* Replaced the yellow */
+  }
+
+  body {
+    background-color: #f3e5f5;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    margin: 0;
+    font-family: 'Arial', sans-serif;
+    overflow: hidden;
+  }
+
+  /* Confetti Logic */
+  .confetti {
+    position: absolute;
+    width: 10px;
+    height: 10px;
+    top: -20px;
+    z-index: 0;
+    display: none; 
+  }
+
+  .active .confetti {
+    display: block;
+    animation: fall linear infinite;
+  }
+
+  @keyframes fall {
+    to { transform: translateY(105vh) rotate(720deg); }
+  }
+
+  /* The Cat */
+  .cat {
+    position: fixed;
+    bottom: -220px; 
+    width: 200px;
+    height: 180px;
+    transition: bottom 0.6s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    z-index: 5;
+  }
+
+  .cat.peek { bottom: 250px; }
+
+  .face {
+    position: absolute;
+    width: 200px;
+    height: 160px;
+    background: var(--cat-color);
+    border-radius: 50% 50% 45% 45%;
+    z-index: 2;
+  }
+
+  .ear {
+    position: absolute;
+    width: 60px;
+    height: 70px;
+    background: var(--cat-color);
+    z-index: 1;
+    border-radius: 15% 85% 15% 15%;
+  }
+  .ear.left { left: 10px; top: -10px; transform: rotate(-15deg); }
+  .ear.right { right: 10px; top: -10px; transform: rotate(60deg) scaleX(-1); }
+
+  .ear::after {
+    content: '';
+    position: absolute;
+    width: 30px;
+    height: 40px;
+    background: var(--ear-inner);
+    left: 15px;
+    top: 15px;
+    border-radius: 15% 85% 15% 15%;
+  }
+
+  .eye {
+    position: absolute;
+    top: 65px;
+    width: 25px;
+    height: 25px;
+    background: var(--eye-color);
+    border-radius: 50%;
+    box-shadow: 0 0 15px rgba(241, 196, 15, 0.6); /* Eye glow */
+    animation: blink 4s infinite;
+  }
+  .eye.left { left: 50px; }
+  .eye.right { right: 50px; }
+
+  @keyframes blink {
+    0%, 90%, 100% { transform: scaleY(1); }
+    95% { transform: scaleY(0.1); }
+  }
+
+  .nose {
+    position: absolute;
+    top: 95px; left: 50%; transform: translateX(-50%);
+    width: 15px; height: 10px; background: #333; border-radius: 50%;
+  }
+
+  /* Better, bolder mouth */
+  .mouth {
+    position: absolute;
+    top: 104px; left: 50%; transform: translateX(-50%);
+    width: 44px; height: 20px;
+  }
+  .mouth::before, .mouth::after {
+    content: ''; position: absolute; width: 20px; height: 14px;
+    border: 3px solid #222; border-top: 0; border-radius: 0 0 15px 15px;
+  }
+  .mouth::before { left: 2px; border-right: 0; }
+  .mouth::after { right: 2px; border-left: 0; }
+
+  .whisker-container { position: absolute; top: 95px; width: 100%; z-index: 3; }
+  .whiskers { position: absolute; width: 55px; height: 2px; background: #444; }
+  .whiskers.left { left: -35px; transform-origin: right; }
+  .whiskers.right { right: -35px; transform-origin: left; }
+  .whiskers::before, .whiskers::after { content: ''; position: absolute; width: 55px; height: 2px; background: #444; }
+  .whiskers.left::before { top: -12px; transform: rotate(15deg); }
+  .whiskers.left::after { top: 12px; transform: rotate(-15deg); }
+  .whiskers.right::before { top: -12px; transform: rotate(-15deg); }
+  .whiskers.right::after { top: 12px; transform: rotate(15deg); }
+
+  /* Birthday Text */
+  .birthday-text {
+    position: fixed;
+    bottom: 120px;
+    text-align: center;
+    color: var(--deep-purple);
+    width: 100%;
+    opacity: 0;
+    transition: opacity 0.5s;
+    font-weight: bold;
+    z-index: 6;
+  }
+  .show-text { opacity: 1; }
+
+  /* Button Styling */
+  .birthday-btn {
+    position: fixed;
+    bottom: 40px;
+    padding: 15px 30px;
+    font-size: 18px;
+    font-weight: bold;
+    color: white;
+    background-color: var(--accent-purple);
+    border: none;
+    border-radius: 50px;
+    cursor: pointer;
+    box-shadow: 0 5px #6c3483;
+    transition: all 0.1s;
+    z-index: 10;
+  }
+
+  .birthday-btn:active {
+    box-shadow: 0 0 #6c3483;
+    transform: translateY(5px);
+  }
+
+  .birthday-btn.on {
+    background-color: var(--deep-purple);
+  }
+</style>
+</head>
+<body id="main-body">
+
+<div id="birthday-cat" class="cat">
+  <div class="ear left"></div>
+  <div class="ear right"></div>
+  <div class="face">
+    <div class="eye left"></div>
+    <div class="eye right"></div>
+    <div class="nose"></div>
+    <div class="mouth"></div>
+    <div class="whisker-container">
+      <div class="whiskers left"></div>
+      <div class="whiskers right"></div>
+    </div>
+  </div>
+</div>
+
+<div id="msg" class="birthday-text">
+  <div style="font-size: 28px; margin-bottom: 10px;">Happy birthday, big booty vern!!!!!</div>
+  <div style="font-size: 20px;">23rd with a PHAT ASS!!!!</div>
+</div>
+
+<button id="surprise-btn" class="birthday-btn">Surprise Vern?</button>
+
+<script>
+  const body = document.getElementById('main-body');
+  const btn = document.getElementById('surprise-btn');
+  const cat = document.getElementById('birthday-cat');
+  const msg = document.getElementById('msg');
+  
+  // Confetti Colors - NO YELLOW ALLOWED!
+  const colors = ['#9b59b6', '#8e44ad', '#6c3483', '#dcdde1', '#efbbff', '#be90d4'];
+  
+  for (let i = 0; i < 75; i++) {
+    const c = document.createElement('div');
+    c.className = 'confetti';
+    c.style.left = Math.random() * 100 + 'vw';
+    c.style.backgroundColor = colors[Math.floor(Math.random() * colors.length)];
+    c.style.animationDuration = (Math.random() * 3 + 2) + 's';
+    c.style.animationDelay = (Math.random() * 2) + 's';
+    body.appendChild(c);
+  }
+
+  let isActive = false;
+
+  btn.addEventListener('click', () => {
+    isActive = !isActive;
+    if (isActive) {
+      cat.classList.add('peek');
+      msg.classList.add('show-text');
+      body.classList.add('active');
+      btn.innerText = "Hide the Party!";
+      btn.classList.add('on');
+    } else {
+      cat.classList.remove('peek');
+      msg.classList.remove('show-text');
+      body.classList.remove('active');
+      btn.innerText = "Surprise Vern?";
+      btn.classList.remove('on');
+    }
+  });
+</script>
+
+</body>
+</html>
