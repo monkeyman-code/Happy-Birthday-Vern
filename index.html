@@ -5,11 +5,11 @@
   :root {
     --accent-purple: #9b59b6;
     --deep-purple: #6c3483;
-    --neon-purple: #be90d4; /* Slightly darkened for white background visibility */
+    --neon-purple: #be90d4;
   }
 
   body {
-    background-color: #ffffff; /* Changed to White */
+    background-color: #ffffff;
     display: flex;
     flex-direction: column;
     justify-content: center;
@@ -39,11 +39,11 @@
     to { transform: translateY(105vh) rotate(720deg); }
   }
 
-  /* The Transparent GIF */
-  .cat {
+  /* GIF Base Styling */
+  .cat-base {
     position: fixed;
     bottom: -450px; 
-    width: 320px;   
+    width: 220px;   /* Adjusted size to fit 4 across comfortably */
     height: auto;
     transition: bottom 0.8s cubic-bezier(0.175, 0.885, 0.32, 1.275);
     z-index: 5;
@@ -51,7 +51,14 @@
     pointer-events: none; 
   }
 
-  .cat.peek { 
+  /* Four Spread-out Positions */
+  .pos-1 { left: 5%; }
+  .pos-2 { left: 28%; }
+  .pos-3 { right: 28%; }
+  .pos-4 { right: 5%; }
+
+  /* Pop up position */
+  .cat-base.peek { 
     bottom: 220px; 
   }
 
@@ -66,7 +73,6 @@
     transition: opacity 0.5s;
     font-weight: bold;
     z-index: 6;
-    /* Added a slight shadow to make text extra crisp on white */
     text-shadow: 1px 1px 2px rgba(0,0,0,0.1);
   }
   .show-text { opacity: 1; }
@@ -104,7 +110,10 @@
   <source src="hbd.mp3" type="audio/mpeg">
 </audio>
 
-<img id="birthday-cat" class="cat" src="cat.gif" alt="Birthday Cat">
+<img id="cat1" class="cat-base pos-1" src="cat.gif" alt="Cat 1">
+<img id="cat2" class="cat-base pos-2" src="cat2.gif" alt="Cat 2">
+<img id="cat3" class="cat-base pos-3" src="cat3.gif" alt="Cat 3">
+<img id="cat4" class="cat-base pos-4" src="cat4.gif" alt="Cat 4">
 
 <div id="msg" class="birthday-text">
   <div style="font-size: 32px; margin-bottom: 10px;">Happy birthday, big booty vern!!!!!</div>
@@ -116,14 +125,20 @@
 <script>
   const body = document.getElementById('main-body');
   const btn = document.getElementById('surprise-btn');
-  const cat = document.getElementById('birthday-cat');
   const msg = document.getElementById('msg');
   const music = document.getElementById('party-music');
   
-  // Confetti Colors (Adjusted for white background)
-  const colors = ['#9b59b6', '#8e44ad', '#6c3483', '#7f8c8d', '#be90d4', '#4834d4'];
+  // Array of all 4 GIF elements
+  const cats = [
+    document.getElementById('cat1'),
+    document.getElementById('cat2'),
+    document.getElementById('cat3'),
+    document.getElementById('cat4')
+  ];
   
-  for (let i = 0; i < 80; i++) {
+  // Confetti setup
+  const colors = ['#9b59b6', '#8e44ad', '#6c3483', '#7f8c8d', '#be90d4', '#4834d4'];
+  for (let i = 0; i < 100; i++) { // Increased confetti for more chaos
     const c = document.createElement('div');
     c.className = 'confetti';
     c.style.left = Math.random() * 100 + 'vw';
@@ -138,14 +153,14 @@
   btn.addEventListener('click', () => {
     isActive = !isActive;
     if (isActive) {
-      cat.classList.add('peek');
+      cats.forEach(cat => cat.classList.add('peek'));
       msg.classList.add('show-text');
       body.classList.add('active');
       btn.innerText = "Hide the Party!";
       btn.classList.add('on');
-      music.play().catch(e => console.log("Audio play blocked: ", e));
+      music.play().catch(e => console.log("Audio play blocked", e));
     } else {
-      cat.classList.remove('peek');
+      cats.forEach(cat => cat.classList.remove('peek'));
       msg.classList.remove('show-text');
       body.classList.remove('active');
       btn.innerText = "Surprise Vern?";
